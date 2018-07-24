@@ -4,9 +4,13 @@ const { green, dim } = require('chalk')
 const { spawn } = require('child_process')
 const { resolvePreloadModules } = require('../')
 
-const cli = meow(`
+const cli = meow(
+  `
   Usage
     $ ${green('pyno')} <filename>
+
+  Options
+    --verbose  Print populated command
 
   Example
     $ ${green('echo')} $PWD
@@ -22,7 +26,16 @@ const cli = meow(`
       -r /Users/dangh/oss/__init__.js ${dim('\\')}
       -r /Users/dangh/oss/src/__init__.js ${dim('\\')}
       /Users/dangh/oss/src/test.js
-`)
+`,
+  {
+    flags: {
+      verbose: {
+        type: 'boolean',
+        default: false
+      }
+    }
+  }
+)
 
 if (cli.input.length === 0) {
   console.error('Specify a filename')
@@ -32,15 +45,17 @@ if (cli.input.length === 0) {
 let filename = path.resolve(cli.input[0] || '')
 let modules = resolvePreloadModules(filename)
 
-if (modules.length) {
-  console.log(
-    green('node'),
-    dim('\\'),
-    ...modules.map(x => '\n  -r ' + x + dim(' \\')),
-    '\n  ' + filename
-  )
-} else {
-  console.log(green('node'), underline(filename))
+if (cli.flags.verbose) {
+  if (modules.length) {
+    console.log(
+      green('node'),
+      dim('\\'),
+      ...modules.map(x => '\n  -r ' + x + dim(' \\')),
+      '\n  ' + filename
+    )
+  } else {
+    console.log(green('node'), underline(filename))
+  }
 }
 
 let args = modules.reduce((acc, x) => acc.concat('-r', x), []).concat(filename)
