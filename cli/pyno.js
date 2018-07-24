@@ -12,7 +12,8 @@ const cli = meow(
     $ ${green('pyno')} <filename>
 
   Options
-    --verbose  Print populated command
+    --verbose      Print populated command
+    --timeout, -t  Timeout to terminate long-running process. Default is 3000 ms
 
   Example
     $ ${green('echo')} $PWD
@@ -34,6 +35,11 @@ const cli = meow(
       verbose: {
         type: 'boolean',
         default: false
+      },
+      timeout: {
+        alias: 't',
+        type: 'string',
+        default: '3000'
       }
     }
   }
@@ -62,5 +68,13 @@ if (cli.flags.verbose) {
 
 let args = modules.reduce((acc, x) => acc.concat('-r', x), []).concat(filename)
 let pyno = spawn('node', args, { windowsHide: true })
+
+let timer = setTimeout(() => {
+  console.log('Timeout.')
+  process.kill(pyno.pid, 'SIGKILL')
+}, parseInt(cli.flags.timeout, 10))
+
+pyno.on('error', () => clearTimeout(timer))
+pyno.on('exit', () => clearTimeout(timer))
 pyno.stdout.on('data', buf => console.log(buf.toString()))
 pyno.stderr.on('data', buf => console.log(buf.toString()))
