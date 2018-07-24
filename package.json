@@ -1,0 +1,18 @@
+{
+  "name": "pyno",
+  "version": "1.0.0",
+  "description": "Auto-preload all __init__.js in folder tree and execute NodeJS module",
+  "main": "index.js",
+  "bin": "cli/pyno.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "dangh",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "meow": "^5.0.0",
+    "path-exists": "^3.0.0"
+  }
+}
