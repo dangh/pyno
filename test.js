@@ -11,3 +11,8 @@ assert.deepStrictEqual(resolvePreloadModules('./fixture/b/c'), [
   path.resolve('./fixture/__init__.js'),
   path.resolve('./fixture/b/c/__init__.js')
 ])
+
+assert.deepStrictEqual(resolvePreloadModules('./fixture/b/c/d'), [
+  path.resolve('./fixture/__init__.js'),
+  path.resolve('./fixture/b/c/__init__.js')
+])

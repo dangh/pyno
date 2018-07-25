@@ -7,8 +7,9 @@ module.exports.resolvePreloadModules = (fp = '') => {
   let { root } = path.parse(fp)
   let result = []
 
-  if (fs.statSync(fp).isDirectory()) {
-    result.unshift(path.resolve(fp, '__init__.js'))
+  let module = path.resolve(fp, '__init__.js')
+  if (pathExists.sync(module)) {
+    result.unshift(module)
   }
 
   do {
