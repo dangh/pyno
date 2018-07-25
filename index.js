@@ -4,6 +4,7 @@ const pathExists = require('path-exists')
 
 module.exports.resolvePreloadModules = (fp = '') => {
   fp = path.resolve(fp)
+  let { root } = path.parse(fp)
   let result = []
 
   if (fs.statSync(fp).isDirectory()) {
@@ -16,7 +17,7 @@ module.exports.resolvePreloadModules = (fp = '') => {
     if (pathExists.sync(module)) {
       result.unshift(module)
     }
-  } while (fp !== '/')
+  } while (fp !== root)
 
   return result
 }
