@@ -2,8 +2,8 @@
 
 const meow = require('meow')
 const path = require('path')
-const { green, dim } = require('chalk')
-const { spawn } = require('child_process')
+const execa = require('execa')
+const { red, green, dim } = require('chalk')
 const { resolvePreloadModules } = require('../')
 
 const cli = meow(
@@ -73,14 +73,9 @@ if (cli.flags.verbose) {
 }
 
 let args = modules.reduce((acc, x) => acc.concat('-r', x), []).concat(filename)
-let pyno = spawn('node', args, { windowsHide: true })
-
-let timer = setTimeout(() => {
-  console.log('Timeout.')
-  process.kill(pyno.pid, 'SIGKILL')
-}, parseInt(cli.flags.timeout, 10))
-
-pyno.on('error', () => clearTimeout(timer))
-pyno.on('exit', () => clearTimeout(timer))
-pyno.stdout.on('data', buf => console.log(buf.toString()))
-pyno.stderr.on('data', buf => console.log(buf.toString()))
+execa('node', args, {
+  timeout: cli.flags.timeout,
+  stdio: 'inherit'
+}).catch(reason => {
+  reason.timedOut && console.log(red('Timed out!'))
+})
