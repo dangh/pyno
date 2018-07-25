@@ -12,8 +12,9 @@ const cli = meow(
     $ ${green('pyno')} <filename>
 
   Options
-    --verbose      Print populated command
-    --timeout, -t  Timeout to terminate long-running process. Default is 3000 ms
+    --verbose       Print populated command
+    --timeout, -t   Timeout to terminate long-running process. Default is 3000 ms
+    --register, -r  Name of preload module. Default is __init__.js
 
   Example
     $ ${green('echo')} $PWD
@@ -40,6 +41,11 @@ const cli = meow(
         alias: 't',
         type: 'string',
         default: '3000'
+      },
+      register: {
+        alias: 'r',
+        type: 'string',
+        default: '__init__.js'
       }
     }
   }
@@ -51,7 +57,7 @@ if (cli.input.length === 0) {
 }
 
 let filename = path.resolve(cli.input[0] || '')
-let modules = resolvePreloadModules(filename)
+let modules = resolvePreloadModules(filename, cli.flags.register)
 
 if (cli.flags.verbose) {
   if (modules.length) {
