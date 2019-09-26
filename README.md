@@ -1,5 +1,5 @@
 # pyno
-Auto-preload __init__.js and execute NodeJS module
+Auto-preload `__init__.js` and execute NodeJS script
 
 ## Install
 
